@@ -9,11 +9,6 @@ window.dashData = {
   },
   projects: [
     { name: "Mind-Wealth Diagnostic", status: "Concept Phase", progress: 10, nextStep: "Review meeting transcript for methodology mapping" },
-    { name: "Slim Game App", status: "In Progress", progress: 30, nextStep: "Admin Auth Verification Passed. Next: Public Funnel Build." }
-  ],
-  systemHealth: [
-    { service: "Admin Access", status: "Healthy", message: "Verified via Service Account" },
-    { service: "GitHub Sync", status: "Active", message: "Repo cloned: kareem-gamal" },
-    { service: "Firebase Auth", status: "Healthy", message: "2 Super Admins Configured" }
+    { name: "Slim Game App", status: "Asset Review", progress: 15, nextStep: "Analyze 600+ videos & JSON map" }
   ]
 };
