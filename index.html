@@ -27,7 +27,13 @@
                 <i class="fas fa-wallet mr-1"></i> Finances
             </button>
             <button onclick="switchTab('projects')" id="tab-projects" class="nav-btn flex-1 py-2 text-center font-medium text-gray-600">
-                <i class="fas fa-rocket mr-1"></i> Projects
+                <i class="fas fa-rocket mr-1"></i> Apps
+            </button>
+            <button onclick="switchTab('tasks')" id="tab-tasks" class="nav-btn flex-1 py-2 text-center font-medium text-gray-600">
+                <i class="fas fa-check-square mr-1"></i> Tasks
+            </button>
+            <button onclick="switchTab('system')" id="tab-system" class="nav-btn flex-1 py-2 text-center font-medium text-gray-600">
+                <i class="fas fa-server mr-1"></i> System
             </button>
         </nav>
     </header>
@@ -55,6 +61,42 @@
                 <!-- Items injected by JS -->
             </div>
         </div>
+        
+        <!-- Project Detail View (Initially Hidden) -->
+        <div id="project-detail" class="hidden fixed inset-0 bg-white z-50 overflow-y-auto">
+            <div class="p-4">
+                <button onclick="closeProjectDetail()" class="mb-4 text-gray-600 hover:text-gray-900">
+                    <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+                <h2 id="detail-title" class="text-2xl font-bold text-gray-900 mb-2"></h2>
+                <span id="detail-status" class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full mb-4 inline-block"></span>
+                <p id="detail-description" class="text-gray-600 mb-6"></p>
+                
+                <h3 class="font-bold text-gray-800 mb-2">Discussion & Updates</h3>
+                <ul id="detail-discussion" class="list-disc list-inside space-y-2 text-gray-700 bg-gray-50 p-4 rounded-lg">
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tasks Tab (Kanban-ish) -->
+        <div id="tasks" class="tab-content space-y-4">
+            <h3 class="font-semibold text-gray-700 mt-2 mb-2">Active Tasks</h3>
+            <div id="task-list" class="space-y-3">
+                 <!-- Items injected by JS -->
+            </div>
+             <h3 class="font-semibold text-gray-700 mt-6 mb-2">Completed</h3>
+            <div id="completed-task-list" class="space-y-3 opacity-75">
+                 <!-- Items injected by JS -->
+            </div>
+        </div>
+
+        <!-- System Tab -->
+        <div id="system" class="tab-content space-y-4">
+            <h3 class="font-semibold text-gray-700 mt-2 mb-2">System Health</h3>
+            <div id="system-list" class="space-y-3">
+                 <!-- Items injected by JS -->
+            </div>
+        </div>
 
     </main>
 
@@ -75,6 +117,7 @@
         document.getElementById('total-eur').textContent = `From ${d.summary.totalEur}`;
 
         const financeList = document.getElementById('finance-list');
+        financeList.innerHTML = '';
         d.finances.forEach(tx => {
             const div = document.createElement('div');
             div.className = 'bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center';
@@ -93,9 +136,11 @@
 
         // Render Projects
         const projectList = document.getElementById('project-list');
+        projectList.innerHTML = '';
         d.projects.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'bg-white p-4 rounded-xl shadow-sm border border-gray-100';
+            div.className = 'bg-white p-4 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:bg-gray-50 transition';
+            div.onclick = () => openProjectDetail(p);
             div.innerHTML = `
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="font-bold text-gray-800">${p.name}</h3>
@@ -105,9 +150,87 @@
                     <div class="bg-blue-600 h-2 rounded-full" style="width: ${p.progress}%"></div>
                 </div>
                 <p class="text-sm text-gray-600"><span class="font-semibold">Next:</span> ${p.nextStep}</p>
+                <div class="mt-2 text-right text-xs text-blue-600 font-medium">View Discussion <i class="fas fa-chevron-right ml-1"></i></div>
             `;
             projectList.appendChild(div);
         });
+
+        // Project Detail Functions
+        function openProjectDetail(project) {
+            document.getElementById('detail-title').textContent = project.name;
+            document.getElementById('detail-status').textContent = project.status;
+            document.getElementById('detail-description').textContent = project.description;
+            
+            const discussionList = document.getElementById('detail-discussion');
+            discussionList.innerHTML = '';
+            if (project.discussion) {
+                project.discussion.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    discussionList.appendChild(li);
+                });
+            }
+            
+            document.getElementById('project-detail').classList.remove('hidden');
+        }
+
+        function closeProjectDetail() {
+            document.getElementById('project-detail').classList.add('hidden');
+        }
+
+        // Render Tasks
+        const taskList = document.getElementById('task-list');
+        const completedTaskList = document.getElementById('completed-task-list');
+        taskList.innerHTML = '';
+        completedTaskList.innerHTML = '';
+
+        if (d.tasks) {
+            d.tasks.forEach(t => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-3 rounded-lg shadow-sm border-l-4 ' + (t.status === 'completed' ? 'border-green-500' : 'border-blue-500');
+                
+                const statusIcon = t.status === 'completed' ? '<i class="fas fa-check-circle text-green-500"></i>' : '<i class="far fa-circle text-gray-400"></i>';
+                
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="text-xl">${statusIcon}</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800 ${t.status === 'completed' ? 'line-through text-gray-500' : ''}">${t.title}</div>
+                            ${t.date ? `<div class="text-xs text-gray-400">${t.date}</div>` : ''}
+                        </div>
+                         ${t.priority && t.status !== 'completed' ? `<span class="text-xs font-bold uppercase ${t.priority === 'high' ? 'text-red-500' : 'text-blue-500'}">${t.priority}</span>` : ''}
+                    </div>
+                `;
+                
+                if (t.status === 'completed') {
+                    completedTaskList.appendChild(div);
+                } else {
+                    taskList.appendChild(div);
+                }
+            });
+        }
+
+        // Render System Health
+        const systemList = document.getElementById('system-list');
+        systemList.innerHTML = '';
+        if (d.systemHealth) {
+            d.systemHealth.forEach(s => {
+                const div = document.createElement('div');
+                div.className = 'bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center space-x-3';
+                const colorClass = s.status === 'Healthy' || s.status === 'Active' ? 'text-green-500' : 'text-red-500';
+                const iconClass = s.status === 'Healthy' || s.status === 'Active' ? 'fa-check-circle' : 'fa-exclamation-circle';
+                div.innerHTML = `
+                    <div class="text-2xl ${colorClass}">
+                        <i class="fas ${iconClass}"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-gray-800">${s.service}</div>
+                        <div class="text-xs text-gray-500">${s.message}</div>
+                    </div>
+                `;
+                systemList.appendChild(div);
+            });
+        }
 
         // Tabs Logic
         function switchTab(tabId) {
