@@ -43,7 +43,8 @@ window.dashData = {
     { id: 2, title: "Clone 'kareem-gamal' Repo", status: "completed", date: "2026-02-15" },
     { id: 3, title: "Create Public Funnel (Quiz Page)", status: "pending", priority: "high" },
     { id: 4, title: "Create Public Funnel (Results Page)", status: "pending", priority: "high" },
-    { id: 5, title: "Integrate Stripe/Paymob", status: "pending", priority: "medium" }
+    { id: 5, title: "Integrate Stripe/Paymob", status: "pending", priority: "medium" },
+    { id: 6, title: "Set up MetaApi for Algo-Trading", status: "pending", priority: "high", description: "Sign up, add MT5 credentials, generate token, share with agent." }
   ],
   systemHealth: [
     { service: "Admin Access", status: "Healthy", message: "Verified via Service Account" },
