@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Genco Price Changes — 2026-02-22</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    .markdown table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .markdown th, .markdown td { border: 1px solid #e5e7eb; padding: 8px; vertical-align: top; }
+    .markdown th { background: #f3f4f6; position: sticky; top: 0; z-index: 1; }
+    .markdown h1,.markdown h2,.markdown h3 { margin-top: 1rem; margin-bottom: .5rem; font-weight: 700; }
+    .markdown ul { list-style: disc; margin-left: 1.25rem; }
+    .markdown a { color: #2563eb; text-decoration: underline; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <div class="max-w-7xl mx-auto p-4 md:p-8">
+    <div class="bg-white rounded-2xl shadow p-5 md:p-8">
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+        <h1 class="text-2xl font-bold">Genco Price Changes (Full Report)</h1>
+        <a href="https://fnasr-source.github.io/fouad-ops/" class="text-sm text-blue-600 underline">← Back to Ops Dashboard</a>
+      </div>
+      <p class="text-sm text-gray-500 mb-6">Source: Wayback + current Shopify catalog snapshot</p>
+      <div id="content" class="markdown overflow-auto"></div>
+    </div>
+  </div>
+  <script>
+    async function load() {
+      const res = await fetch('./reports/genco_price_changes_2026-02-22.md');
+      const md = await res.text();
+      document.getElementById('content').innerHTML = marked.parse(md, { breaks: true });
+    }
+    load();
+  </script>
+</body>
+</html>
